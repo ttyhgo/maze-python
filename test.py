@@ -59,20 +59,18 @@ def solve_maze(matrix, x=0, y=0, gx=0, gy=0, list=[(0, 0)]):
     d = [(x + 1, y), (x, y + 1), (x -1, y), (x, y - 1)]
     flag = False
     for (xx, yy) in d:
-        if yy < 0 or xx < 0 or x > gx or y > gy: continue
+        if yy < 0 or xx < 0 or xx > gx or yy > gy: continue
         if yy-1 >= 0 and xx-1 >= 0 and matrix[yy-1][xx] is 1 and matrix[yy-1][xx-1] is 1 and matrix[yy][xx-1] is 1: continue
-        if yy-1 >= 0 and xx+1 <= gx and matrix[yy-1][xx] is 1 and matrix[yy-1][xx+1] is 1 and matrix[yy][xx+1] is 1: continue
-        if yy+1 <= gy and xx-1 >= 0 and matrix[yy+1][xx] is 1 and matrix[yy+1][xx-1] is 1 and matrix[yy][xx-1] is 1: continue
-        if yy+1 <= gy and xx+1 <= gx and matrix[yy+1][xx] is 1 and matrix[yy+1][xx+1] is 1 and matrix[yy][xx+1] is 1: continue
-        if matrix[yy][xx] is 1:
+        elif yy-1 >= 0 and xx+1 < gx and matrix[yy-1][xx] is 1 and matrix[yy-1][xx+1] is 1 and matrix[yy][xx+1] is 1: continue
+        elif yy+1 <= gy and xx-1 >= 0 and matrix[yy+1][xx] is 1 and matrix[yy+1][xx-1] is 1 and matrix[yy][xx-1] is 1: continue
+        elif yy+1 <= gy and xx+1 <= gx and matrix[yy+1][xx] is 1 and matrix[yy+1][xx+1] is 1 and matrix[yy][xx+1] is 1: continue
+        elif matrix[yy][xx] is 1:
             flag = True
             break
     if flag:
         list.append((xx, yy))
-        flag = False
         solve_maze(matrix, xx, yy, gx, gy, list)
     else:
-        print x,y
         x, y = list.pop()
         solve_maze(matrix, x, y, gx, gy, list)
 
@@ -82,9 +80,17 @@ if __name__ == '__main__':
     app = wx.App()
     e = Example(None, title='Size')
     e.make_maze(w, h)
-    solve_maze(e.vis, 0, 0, w-1, h-1)
-    for i in range(0, w):
-        for j in range(0, h):
+    ll = [(0,0)]
+    solve_maze(e.vis, 0, 0, w-1, h-1, ll)
+    c = 0
+    for i in range(0,w):
+        for j in range(0,h):
             if e.vis[j][i] is 2:
-                wx.Panel(e.pnl, pos=(150+i*20, j*20),size=(20, 20)).SetBackgroundColour(wx.Colour(255,0,0))
+                wx.Panel(e.pnl, pos=(150+i*20, j*20),size=(20, 20)).SetBackgroundColour(wx.Colour(0,255-c,0))
+                c +=5
+    c= 0
+    for (x,y) in ll:
+        wx.Panel(e.pnl, pos=(150+x*20, y*20),size=(20, 20)).SetBackgroundColour(wx.Colour(255-c,0,0))
+        c+=5
+    print ll
     app.MainLoop()
